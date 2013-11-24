@@ -141,7 +141,7 @@
 			dependencies = (
 			);
 			name = "npapi-file-io";
-			productName = npapi-file-io;
+			productName = "npapi-file-io";
 			productReference = 1430E40314FBFAF900B7D910 /* npapi-file-io.plugin */;
 			productType = "com.apple.product-type.bundle";
 		};
@@ -151,7 +151,7 @@
 		1430E3EB14FBFA8100B7D910 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1430E3EE14FBFA8100B7D910 /* Build configuration list for PBXProject "npapi-file-io" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -213,12 +213,15 @@
 		1430E3F014FBFA8100B7D910 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
 		1430E3F114FBFA8100B7D910 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 			};
 			name = Release;
 		};
@@ -226,7 +229,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -264,7 +267,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
