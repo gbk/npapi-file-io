@@ -1,6 +1,6 @@
 #include "file-io.h"
 
-#include "third_party/build/build_config.h"
+#include "build/build_config.h"
 
 #include <stdio.h>
 
@@ -8,7 +8,7 @@
 #include <io.h>
 #include <windows.h>
 #include <direct.h>
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
 #include <dirent.h>
 #endif
 #include <sys/stat.h>
@@ -16,7 +16,7 @@
 #include <cstring>
 #include <string>
 
-#if defined(OS_LINUX)
+#if defined(OS_POSIX)
 const mode_t DEFAULT_FOLDER_PERMISSIONS = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP;
 #define PLATFORM_PATH_SEPARATOR_CHAR '/'
 #define PLATFORM_PATH_SEPARATOR_STRING "/"
@@ -78,9 +78,6 @@ bool getFile(const char *filename, char *&value, size_t &len, const bool isBinar
 }
 
 bool saveText(const char *filename, const char *value, size_t len) {
-  if (fileExists(filename)) {
-    return false;
-  }
   FILE *file = fopen(filename, "w");
   if (!file) {
     return false;
@@ -107,9 +104,6 @@ bool saveText(const char *filename, const char *value, size_t len) {
 }
 
 bool saveBinaryFile(const char *filename, const char *bytes, const size_t len) {
-  if (fileExists(filename)) {
-    return false;
-  }
   FILE *file = fopen(filename, "wb");
   if (!file) {
     return false;
@@ -135,7 +129,7 @@ bool createDirectory(const char *filename) {
     if (!fileExists(subdir)) {
 #if defined(OS_WIN)
       lastSucceeded = _mkdir(subdir) == 0;
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
       lastSucceeded = mkdir(subdir, DEFAULT_FOLDER_PERMISSIONS) == 0;
 #endif
     }
@@ -152,7 +146,7 @@ bool removeFile(const char *filename) {
 #if defined(OS_WIN)
   DWORD newAttributes = GetFileAttributesA(filename) & (((DWORD)-1) & ~FILE_ATTRIBUTE_READONLY);
   return SetFileAttributesA(filename, newAttributes) && (DeleteFile(filename) != 0);
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
   return remove(filename) == 0;
 #else
   return false;
@@ -177,7 +171,7 @@ bool removeDirectory(const char *filename) {
   delete subfiles;
 #if defined(OS_WIN)
   return success && RemoveDirectoryA(filename);
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
   return success && (remove(filename) == 0);
 #else
   return false;
@@ -190,9 +184,20 @@ bool getTempPath(char *&value, size_t &len) {
 #if defined(OS_WIN)
   len = GetTempPathA(bufferSize, value);
   return len != 0;
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
   sprintf(value, "%s/", P_tmpdir);
   len = strlen(value);
+  return len != 0;
+#else
+  return false;
+#endif
+}
+
+bool getSystemPath(char *&value, size_t &len) {
+  const size_t bufferSize = FILENAME_MAX + 1;
+  value = new char[bufferSize];
+#if defined(OS_WIN)
+  len = GetSystemDirectory(value, bufferSize);
   return len != 0;
 #else
   return false;
@@ -205,7 +210,7 @@ void pushFile(std::vector<FileEntry *> *&files, WIN32_FIND_DATAA &file) {
     files->push_back(new FileEntry(file.cFileName, (file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY));
   }
 }
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
 void pushFile(std::vector<FileEntry *> *&files, dirent *dirp) {
   if (strcmp(".", dirp->d_name) && strcmp("..", dirp->d_name)) {
     files->push_back(new FileEntry(dirp->d_name, dirp->d_type == DT_DIR));
@@ -242,7 +247,7 @@ bool listFiles(const char *normalisedDirectoryName, std::vector<FileEntry *> *&f
 
   delete[] filenameSlashStar;
   return true;
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
   DIR *dir;
   struct dirent *dirp;
   dir = opendir(normalisedDirectoryName);

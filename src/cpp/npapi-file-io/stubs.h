@@ -1,7 +1,7 @@
 #ifndef STUBS_H_
 #define STUBS_H_
 
-#include "third_party/npapi/bindings/nphostapi.h"
+#include "npapi/bindings/nphostapi.h"
 
 //For NPPluginFuncs
 NPError StubNewInstance(NPMIMEType pluginType,

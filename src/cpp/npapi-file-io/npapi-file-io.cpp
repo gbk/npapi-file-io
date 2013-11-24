@@ -39,7 +39,7 @@ NPError __stdcall NP_Initialize(NPNetscapeFuncs *browser_funcs) {
   SetBrowserFuncs(browser_funcs);
   return NPERR_NO_ERROR;
 }
-#elif defined(OS_LINUX)
+#elif defined(OS_POSIX)
 extern "C" {
 NPError NP_Initialize(NPNetscapeFuncs *browser_funcs, NPPluginFuncs *plugin_funcs) {
   NPError error = SetPluginFuncs(plugin_funcs);
@@ -169,16 +169,23 @@ bool HasJavascriptMethod(NPObject *npobj, NPIdentifier name) {
 
 bool InvokeJavascript_NoArgs(NPObject *npobj, const char *methodName, NPVariant *&result) {
   bool success = false;
+  char *value = NULL;
+  size_t len = 0;
   if (!strcmp(methodName, "getPlatform")) {
     //getPlatform() : string
 #if defined(OS_WIN)
     success = SetReturnValue("windows", 7, *result);
+  } else if (!strcmp(methodName, "getSystemPath")) {
+    if (getSystemPath(value, len)) {
+      success = SetReturnValue(value, len, *result);
+      delete[] value;
+    }
 #elif defined(OS_LINUX)
     success = SetReturnValue("linux", 5, *result);
-#endif 
+#elif defined(OS_MACOSX)
+    success = SetReturnValue("osx", 3, *result);
+#endif
   } else if (!strcmp(methodName, "getTempPath") || !strcmp(methodName, "getTmpPath")) {
-    char *value = NULL;
-    size_t len = 0;
     if (getTempPath(value, len)) {
       success = SetReturnValue(value, len, *result);
       delete[] value;

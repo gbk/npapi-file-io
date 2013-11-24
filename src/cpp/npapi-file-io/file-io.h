@@ -28,6 +28,7 @@ bool removeFile(const char *filename);
 bool saveText(const char *filename, const char *value, size_t len);
 bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
 bool getTempPath(char *&value, size_t &len);
+bool getSystemPath(char *&value, size_t &len);
 bool listFiles(const char *normalisedDirectoryName, std::vector<FileEntry *> *&files);
 
 #endif //FILE_IO_H_

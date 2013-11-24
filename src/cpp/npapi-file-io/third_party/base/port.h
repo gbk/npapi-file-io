@@ -40,6 +40,8 @@ namespace base {
 // for this purpose.  MSVC does not provide va_copy, so define an
 // implementation here.  It is not guaranteed that assignment is a copy, so the
 // StringUtil.VariableArgsFunc unit test tests this capability.
+#if defined(OS_MACOSX)
+#else
 inline void va_copy(va_list& a, va_list& b) {
 #if defined(COMPILER_GCC)
   ::va_copy(a, b);
@@ -47,6 +49,7 @@ inline void va_copy(va_list& a, va_list& b) {
   a = b;
 #endif
 }
+#endif
 
 }  // namespace base
 

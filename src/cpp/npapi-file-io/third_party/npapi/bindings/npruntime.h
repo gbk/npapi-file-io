@@ -72,7 +72,7 @@
 // BEGIN GOOGLE MODIFICATIONS
 
 #include "base/basictypes.h"
-#include "bindings/npapi.h"
+#include "npapi/bindings/npapi.h"
 
 #if defined(OS_WIN)
 typedef uint8 uint8_t;
